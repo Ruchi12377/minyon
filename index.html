@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>みにょん</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            max-width: 52rem;
+        }
+
+        .parent {
+            display: flex;
+            justify-content: center;
+        }
+
+        .title {
+            text-align: center;
+        }
+
+        #inputField {
+            padding: 5px;
+            margin: 10px 0;
+            max-width: 100%;
+            font-size: 18px;
+        }
+
+        #answer {
+            font-size: 24px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #24baff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #ff7696;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+        }
+
+        .button:hover {
+            background-color: #FF91AB;
+        }
+
+        .future {
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .list {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="parent">
+        <div class="container">
+            <h2 class="title">暗号を解くよー</h2>
+            <input type="text" id="inputField">
+            <button onclick="resolveWrap()">教えて〜</button>
+            <p id="answer">&gt;_&lt;</p>
+            <a href="https://www.cafe-athome.com/maid-blog/minyon/82" class="button" target="_blank">元の問題(外部リンク)</a>
+            <a href="https://www.cafe-athome.com/maid-blog/minyon/83" class="button" target="_blank">問題のヒント(外部リンク)</a>
+
+            <h3 class="future">やるべきこと</h3>
+            <ul class="list">
+                <li>ちっちゃい「つ」</li>
+                <li>半濁音</li>
+            </ul>
+            <p>作った人 : るち(@Ruchi12377)</p>
+        </div>
+    </div>
+
+    <script>
+        //a!
+        const E_exclamation = "le";
+        //a2!
+        const E_number_exclamation = "lne";
+        //a2
+        const E_number = "ln";
+        //a
+        const E_letter = "l";
+
+        const alphabetToNum = {
+            'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5,
+            'g': 6, 'h': 7, 'i': 8, 'j': 9, 'k': 10, 'l': 11,
+            'm': 12, 'n': 13, 'o': 14, 'p': 15, 'q': 16, 'r': 17,
+            's': 18, 't': 19, 'u': 20, 'v': 21, 'w': 22, 'x': 23,
+            'y': 24, 'z': 25
+        };
+
+        const numToHiragana = {
+            '0': 'あ', '1': 'い', '2': 'う', '3': 'え', '4': 'お',
+            '5': 'か', '6': 'き', '7': 'く', '8': 'け', '9': 'こ',
+            '10': 'さ', '11': 'し', '12': 'す', '13': 'せ', '14': 'そ',
+            '15': 'た', '16': 'ち', '17': 'つ', '18': 'て', '19': 'と',
+            '20': 'な', '21': 'に', '22': 'ぬ', '23': 'ね', '24': 'の',
+            '25': 'は', '26': 'ひ', '27': 'ふ', '28': 'へ', '29': 'ほ',
+            '30': 'ま', '31': 'み', '32': 'む', '33': 'め', '34': 'も',
+            '35': 'や', '36': 'ゆ', '37': 'よ',
+            '38': 'ら', '39': 'り', '40': 'る', '41': 'れ', '42': 'ろ',
+            '43': 'わ', '44': 'を', '45': 'ん'
+        };
+
+        const hiraganaWithDakuten = {
+            'か': 'が', 'き': 'ぎ', 'く': 'ぐ', 'け': 'げ', 'こ': 'ご',
+            'さ': 'ざ', 'し': 'じ', 'す': 'ず', 'せ': 'ぜ', 'そ': 'ぞ',
+            'た': 'だ', 'ち': 'ぢ', 'つ': 'づ', 'て': 'で', 'と': 'ど',
+            'は': 'ば', 'ひ': 'び', 'ふ': 'ぶ', 'へ': 'べ', 'ほ': 'ぼ'
+        };
+
+        function isPositiveDigit(input) {
+            const numRegex = /^\d+$/;
+            return numRegex.test(input);
+        }
+
+        function token2num(data, type) {
+            const originLetter = -12;
+            const indexL = originLetter + alphabetToNum[data[0]];
+
+            const originNumber = -11;
+            const diff = parseInt(data[1] - 1) * 25;
+            const indexN = originNumber + alphabetToNum[data[0]] + diff;
+            switch (type) {
+                case E_exclamation:
+                    return hiraganaWithDakuten[numToHiragana[indexL]];
+                    break;
+                case E_letter:
+                    return numToHiragana[indexL];
+                case E_number_exclamation:
+                    return hiraganaWithDakuten[numToHiragana[indexN]];
+                    break;
+                case E_number:
+                    return numToHiragana[indexN];
+                    break;
+            }
+            return data + ":" + type;
+        }
+
+        function resolveWrap() {
+            const inputValue = document.getElementById("inputField").value;
+            document.getElementById("answer").textContent = resolve(inputValue);
+        }
+
+        function resolve(str) {
+            let currentPos = 0;
+            const token = [];
+
+            //tokenize
+            while (currentPos < str.length) {
+                const nextPos = currentPos + 1;
+                //濁点つき
+                if (str[nextPos] == "!") {
+                    const t = str[currentPos] + str[nextPos];
+                    token.push([t, E_exclamation]);
+                    currentPos += 2;
+                    continue;
+                }
+
+                //letter + number
+                if (isPositiveDigit(str[nextPos])) {
+                    //濁点つき
+                    if (str[nextPos + 1] == "!") {
+                        const t = str[currentPos] + str[nextPos] + str[nextPos + 1];
+                        token.push([t, E_number_exclamation]);
+                        currentPos += 3;
+                        continue;
+                    }
+
+                    const t = str[currentPos] + str[nextPos];
+                    token.push([t, E_number]);
+                    currentPos += 2;
+                    continue;
+                }
+
+                token.push([str[currentPos], E_letter]);
+                currentPos++;
+            }
+
+            let result = "";
+            for (let i = 0; i < token.length; i++) {
+                const data = token[i][0];
+                const type = token[i][1];
+                const tmp = token2num(data, type);
+                result += tmp == undefined ? "■" : tmp;
+            }
+
+            return result;
+        }
+
+    </script>
+</body>
+
+</html>
